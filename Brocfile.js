@@ -7,8 +7,13 @@ var compileLess = require('broccoli-less-single')
   , scriptsDir = 'scripts'
   , templatesDir = 'templates'
 
+// compile all less into styles.css
 less = compileLess([funnel(lessDir)], 'styles.less', 'styles.css')
+
+// run all scripts through babel
 babelScripts = babelTranspiler(funnel(scriptsDir), {sourceMap: 'inline'})
+
+// run babelified scripts into browserify
 browserifyScripts = browserify(babelScripts, {
   bundles: {
     'scripts.js': {
@@ -16,10 +21,10 @@ browserifyScripts = browserify(babelScripts, {
     }
   }
 })
+
+// copy all templates into dist under /templates
 templates = funnel('templates', {
   destDir: 'templates'
 })
-
-
 
 module.exports = mergeTrees([less, browserifyScripts, templates])
