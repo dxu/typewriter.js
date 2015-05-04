@@ -1,0 +1,23 @@
+{
+  "name": "boiler",
+  "version": "1.0.0",
+  "description": "Steamed broccoli",
+  "main": "index.js",
+  "dependencies": {
+    "broccoli": "^0.16.2"
+  },
+  "devDependencies": {
+    "broccoli-babel-transpiler": "^5.0.0",
+    "broccoli-fast-browserify": "^0.2.5",
+    "broccoli-funnel": "^0.2.3",
+    "broccoli-less-single": "^0.3.0",
+    "broccoli-merge-trees": "^0.2.1",
+    "grunt": "^0.4.5",
+    "grunt-broccoli": "^0.4.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
