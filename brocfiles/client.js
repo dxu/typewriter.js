@@ -3,15 +3,15 @@ var compileLess = require('broccoli-less-single')
   , browserify = require('broccoli-fast-browserify')
   , mergeTrees = require('broccoli-merge-trees')
   , funnel = require('broccoli-funnel')
-  , lessDir = 'styles'
-  , scriptsDir = 'scripts'
-  , templatesDir = 'templates'
+  , clientLessDir = 'client/styles'
+  , clientScriptsDir = 'client/scripts'
+  , clientTemplatesDir = 'client/templates'
 
 // compile all less into styles.css
-less = compileLess([funnel(lessDir)], 'styles.less', 'styles.css')
+less = compileLess([funnel(clientLessDir)], 'styles.less', 'styles.css')
 
 // run all scripts through babel
-babelScripts = babelTranspiler(funnel(scriptsDir), {sourceMap: 'inline'})
+babelScripts = babelTranspiler(funnel(clientScriptsDir), {sourceMap: 'inline'})
 
 // run babelified scripts into browserify
 browserifyScripts = browserify(babelScripts, {
@@ -23,7 +23,7 @@ browserifyScripts = browserify(babelScripts, {
 })
 
 // copy all templates into dist under /templates
-templates = funnel('templates', {
+templates = funnel(clientTemplatesDir, {
   destDir: 'templates'
 })
 
