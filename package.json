@@ -13,7 +13,8 @@
     "broccoli-less-single": "^0.3.0",
     "broccoli-merge-trees": "^0.2.1",
     "grunt": "^0.4.5",
-    "grunt-broccoli": "^0.4.0"
+    "grunt-broccoli": "^0.4.0",
+    "mocha": "^2.2.4"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
