@@ -1,4 +1,9 @@
-require('./test')()
+console.log('he', Typewriter)
 
-console.log('he')
+document.addEventListener("DOMContentLoaded", function(event) {
+  var t = new Typewriter({
+    container: document.getElementById('test')
+  });
 
+  t.type('hjwef')
+})
