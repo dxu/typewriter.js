@@ -25,7 +25,18 @@ Typewriter.prototype.cr = function() {
 
 // creates and puts a text node
 Typewriter.prototype.type = function(text) {
-  this.currentElement.appendChild(document.createTextNode(text))
+  var letterCount
+    , interval;
+
+  letterCount = 0;
+  interval = setInterval(() => {
+    this.currentElement.innerHTML += text[letterCount]
+    letterCount++
+    if(letterCount === text.length) {
+      clearInterval(interval);
+    }
+  }, 1/this.lps * 1000);
+
   return this
 }
 
@@ -34,7 +45,7 @@ Typewriter.prototype.type = function(text) {
 // .tag('p').text('this is text ').tag('a').text('this is a link')
 
 // create a tag, and set that as the current operating element
-Typewriter.prototype.tag = function(tag, classes, id) {
+Typewriter.prototype.beginTag = function(tag, classes, id) {
   this.currentElement = document.createElement(tag)
   this.container.currentElement.appendChild(this.currentElement)
   return this
