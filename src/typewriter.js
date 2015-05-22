@@ -82,6 +82,11 @@ Typewriter.prototype.startTick = function() {
 
 // pause the typewriter, in milliseconds
 Typewriter.prototype.pause = function(duration) {
+  this.currentPromise = this.currentPromise.then(function() {
+    return new Promise(function(resolve) {
+      setTimeout(resolve, duration)
+    })
+  })
   return this
 }
 
