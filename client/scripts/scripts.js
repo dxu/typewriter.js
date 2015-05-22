@@ -4,5 +4,8 @@ document.addEventListener("DOMContentLoaded", function(event) {
     container: document.getElementById('test')
   });
 
-  t.type('hjwefaweofauwhrgiuaehrgiuahweoauwhefoawuhgeoaerughaoriguhaowiughaowriguhaowriguhaorguh').beginTag('p')
+  t.type('i\'m typing like a noob')
+    .pause(3000)
+    .beginTag('span')
+    .type('this text should be way bigger just so you know')
 })
