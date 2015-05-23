@@ -8,7 +8,6 @@ window.Typewriter = function(options) {
   this.lps = options.lps || 5
   this.tickRate = options.tickRate || 5
   // add a typing marker to the container, and add a typewriter text block
-  options.container
   text = document.createElement('div')
   marker = document.createElement('i')
   text.classList.add('typewriter-text')
@@ -20,10 +19,10 @@ window.Typewriter = function(options) {
   this.currentElement = this.container
   // used for maintaining order of execution, immediately resolve the first op
   this.currentPromise = Promise.resolve()
-
+  // save the original options, just in case
+  this.options = options
 
   // create a style tag to apply styles
-
   var head = document.head || document.getElementsByTagName('head')[0]
     , style = document.createElement('style')
     , css = `i {
