@@ -1,15 +1,45 @@
 // Typewriter factory
 window.Typewriter = function(options) {
+  var text
+    , marker
   if(options.container === undefined || options.container === null) {
     throw new Error("No typewriter container defined")
   }
   this.lps = options.lps || 5
   this.tickRate = options.tickRate || 5
-  this.container = options.container
+  // add a typing marker to the container, and add a typewriter text block
+  options.container
+  text = document.createElement('div')
+  marker = document.createElement('i')
+  text.classList.add('typewriter-text')
+  marker.classList.add('typewriter-marker')
+  options.container.appendChild(text)
+  options.container.appendChild(marker)
+  this.container = text
   // start off with the current element being a div
   this.currentElement = this.container
   // used for maintaining order of execution, immediately resolve the first op
   this.currentPromise = Promise.resolve()
+
+
+  // create a style tag to apply styles
+
+  var head = document.head || document.getElementsByTagName('head')[0]
+    , style = document.createElement('style')
+    , css = `i {
+      background: red;
+    }`;
+
+  style.type = 'text/css';
+
+  if (style.styleSheet){
+    style.styleSheet.cssText = css;
+  } else {
+    style.appendChild(document.createTextNode(css));
+  }
+
+  head.insertBefore(style, head.firstChild);
+
   return this
 }
 
@@ -57,7 +87,10 @@ Typewriter.prototype.beginTag = function(tag, classes, id) {
 
 // insert a carriage return in the form of a br tag
 Typewriter.prototype.cr = function() {
-  this.currentElement.appendChild(document.createElement("br"));
+  this.currentPromise = this.currentPromise.then(() => {
+    this.currentElement.appendChild(document.createElement("br"));
+    return Promise.resolve()
+  })
   return this
 }
 
