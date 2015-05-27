@@ -86,6 +86,43 @@ Typewriter.prototype.type = function(text) {
   return this
 }
 
+// TEST CASES TO WRITE:
+// 1.
+// a. create some text
+// b. create a div inside the div
+// c. exit the div (back to the parent)
+// d. create some more text
+// e. remove the text
+// f. does it remove from the last text node?
+Typewriter.prototype.delete = function(count) {
+  this.currentPromise = this.currentPromise.then(() => {
+    // return a promise that only resolves once we've deleted `count` letters
+    return new Promise((resolve) => {
+      console.log('current', this.currentElement, this.currentElement.textContent, this.currentElement.textContent.splice, typeof this.currentElement.textContent, ('123').splice)
+      // this.currentElement.textContent = this.currentElement.textContent.slice(0, -1)
+      console.log('joijoij')
+
+      // filter out the last textnode, and from that text node
+      for(var i=this.currentElement.childNodes.length; --i>=0; ) {
+        // if its a text node, setup an interval removing letters from it, and then return
+        if(this.currentElement.childNodes[i].nodeType === 3) {
+          let interval = window.setInterval(() => {
+            this.currentElement.childNodes[i].nodeValue = this.currentElement.childNodes[i].nodeValue.slice(0, -1)
+            if(count-- === 0) {
+              window.clearInterval(interval)
+              resolve()
+            }
+          }, 1/this.lps * 1000)
+          return
+        }
+      }
+      // if there are no text nodes, then resolve and return
+      resolve()
+    })
+  }).catch(console.log.bind(console))
+  return this
+}
+
 // this should return
 // <p> this is text <a>this is a link</a></p>
 // .tag('p').text('this is text ').tag('a').text('this is a link')
