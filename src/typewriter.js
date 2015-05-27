@@ -1,4 +1,4 @@
-// Typewriter factory
+// Typewriter
 window.Typewriter = function(options) {
   var text
     , marker
@@ -14,7 +14,6 @@ window.Typewriter = function(options) {
   this.textMarker.classList.add('typewriter-marker')
   // options.container.appendChild(text)
   options.container.appendChild(this.textMarker)
-  console.log('hw', this.textMarker, this.textMarker.parentNode)
   this.container = options.container
   // start off with the current element being a div
   this.currentElement = this.container
@@ -22,6 +21,7 @@ window.Typewriter = function(options) {
   this.currentPromise = Promise.resolve()
   // save the original options, just in case
   this.options = options
+
 
   // create a style tag to apply styles. prepend it so it can be overridden
   var head = document.head || document.getElementsByTagName('head')[0]
@@ -65,6 +65,7 @@ Typewriter.prototype.type = function(text) {
       , interval
       , textNode;
     letterCount = 0;
+    // return a promise that resolves once it's finished
     return new Promise((resolve) => {
 
       // create a text node for building the text
@@ -72,7 +73,7 @@ Typewriter.prototype.type = function(text) {
       // prepend it in front of the text marker
       this.currentElement.insertBefore(textNode, this.textMarker)
 
-      interval = setInterval(() => {
+      interval = window.setInterval(() => {
         textNode.textContent += text[letterCount]
         letterCount++
         // finished typing
@@ -98,9 +99,7 @@ Typewriter.prototype.delete = function(count) {
   this.currentPromise = this.currentPromise.then(() => {
     // return a promise that only resolves once we've deleted `count` letters
     return new Promise((resolve) => {
-      console.log('current', this.currentElement, this.currentElement.textContent, this.currentElement.textContent.splice, typeof this.currentElement.textContent, ('123').splice)
       // this.currentElement.textContent = this.currentElement.textContent.slice(0, -1)
-      console.log('joijoij')
 
       // filter out the last textnode, and from that text node
       for(var i=this.currentElement.childNodes.length; --i>=0; ) {
@@ -134,7 +133,6 @@ Typewriter.prototype.beginTag = function(tag) {
     // append the text marker to this new tag
     newTag.appendChild(this.textMarker.parentNode.removeChild(this.textMarker))
 
-    console.log('current', this.currentElement)
     this.currentElement.appendChild(newTag)
     this.currentElement = newTag
     return Promise.resolve()
