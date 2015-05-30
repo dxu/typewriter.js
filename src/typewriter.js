@@ -7,6 +7,8 @@ window.Typewriter = function(options) {
   }
   this.lps = options.lps || 5
   this.tickRate = options.tickRate || 5
+  // the amount of time you wait until the tickMark starts ticking again
+  this.tickDelay = options.tickDelay || 2000
   // add a typing marker to the container, and add a typewriter text block
   // text = document.createElement('div')
   this.textMarker = document.createElement('i')
@@ -18,6 +20,11 @@ window.Typewriter = function(options) {
   // start off with the current element being a div
   this.currentElement = this.container
   // used for maintaining order of execution, immediately resolve the first op
+  this.currentPromise = Promise.resolve()
+
+  // this.tickAction used
+  this.tickForward = options.tickForward
+  this.tickReverse = options.tickReverse
   this.currentPromise = Promise.resolve()
   // save the original options, just in case
   this.options = options
@@ -165,6 +172,18 @@ Typewriter.prototype.stopTick = function() {
 
 // enable cursor tick
 Typewriter.prototype.startTick = function() {
+  return this
+}
+
+// the forward tick function
+Typewriter.prototype._tickForward = function(currentElement, textMarker) {
+  if(this.tickForward !== undefined && this.tickForward !== null) {
+    this.tickForward(currentElement, textMarker)
+  }
+  // otherwise the default action is to hide the textMarker
+  else {
+    textMarker.elem.style.display = 'none'
+  }
   return this
 }
 
