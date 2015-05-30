@@ -78,6 +78,7 @@ Typewriter.prototype.feed = function(container) {
 
 // creates and puts a text node
 Typewriter.prototype.type = function(text) {
+  // shouldn't tick when it's typing
   this.currentPromise = this.currentPromise.then(() => {
     var letterCount
       , interval
@@ -85,7 +86,7 @@ Typewriter.prototype.type = function(text) {
     letterCount = 0;
     // return a promise that resolves once it's finished
     return new Promise((resolve) => {
-
+      this.stopTicking()
       // create a text node for building the text
       textNode = document.createTextNode('')
       // prepend it in front of the text marker
@@ -102,6 +103,14 @@ Typewriter.prototype.type = function(text) {
       }, 1/this.lps * 1000)
     })
   }).catch(console.log.bind(console))
+
+
+  // when the new promise (of typing) finishes, we should start the ticking
+  this.currentPromise.then(() => {
+    console.log('finished ticking')
+    this.startTicking()
+  })
+
   return this
 }
 
@@ -178,6 +187,10 @@ Typewriter.prototype.changeLPS = function(lps) {
 
 // disable cursor tick
 Typewriter.prototype.stopTicking = function() {
+  console.log('cleared interval', this.tickInterval)
+  window.clearInterval(this.tickInterval)
+  // make sure that the marker is unticked
+  this._untick(this.currentElement, this.textMarker)
   return this
 }
 
