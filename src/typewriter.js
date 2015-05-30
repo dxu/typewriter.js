@@ -6,7 +6,8 @@ window.Typewriter = function(options) {
     throw new Error("No typewriter container defined")
   }
   this.lps = options.lps || 5
-  this.tickRate = options.tickRate || 5
+  // times per second it ticks
+  this.tickRate = options.tickRate || 2
   // the amount of time you wait until the tickMark starts ticking again
   this.tickDelay = options.tickDelay || 2000
   // add a typing marker to the container, and add a typewriter text block
@@ -23,12 +24,15 @@ window.Typewriter = function(options) {
   this.currentPromise = Promise.resolve()
 
   // this.tickAction used
-  this.tickForward = options.tickForward
-  this.tickReverse = options.tickReverse
+  this.tick = options.tick
+  this.untick = options.untick
   this.currentPromise = Promise.resolve()
   // save the original options, just in case
   this.options = options
 
+
+  // tick interval internal
+  this.tickInterval = undefined
 
   // create a style tag to apply styles. prepend it so it can be overridden
   var head = document.head || document.getElementsByTagName('head')[0]
@@ -56,7 +60,14 @@ window.Typewriter = function(options) {
 
   head.insertBefore(style, head.firstChild);
 
+
+  this._init()
+
   return this
+}
+
+Typewriter.prototype._init = function() {
+  this.startTicking()
 }
 
 // defines the container with the text
@@ -166,23 +177,51 @@ Typewriter.prototype.changeLPS = function(lps) {
 }
 
 // disable cursor tick
-Typewriter.prototype.stopTick = function() {
+Typewriter.prototype.stopTicking = function() {
   return this
 }
 
 // enable cursor tick
-Typewriter.prototype.startTick = function() {
+Typewriter.prototype.startTicking = function() {
+  var currentlyTicked = false
+  this.tickInterval = window.setInterval(() => {
+    // if it's currently ticked then tick, otherwise untick
+    currentlyTicked ? this._untick(this.currentElement, this.textMarker) :
+      this._tick(this.currentElement, this.textMarker)
+    currentlyTicked = !currentlyTicked
+  }, 1000 / this.tickRate)
+
   return this
 }
 
+var lastDisplay
+
+// TODO: If I hide an already hidden element, when I show, will it show, or will it remain hidden?
 // the forward tick function
-Typewriter.prototype._tickForward = function(currentElement, textMarker) {
-  if(this.tickForward !== undefined && this.tickForward !== null) {
-    this.tickForward(currentElement, textMarker)
+Typewriter.prototype._tick = (function(){
+  console.log('tick')
+  return function(currentElement, textMarker) {
+    if(this.tick !== undefined && this.tick !== null) {
+      this.tick(currentElement, textMarker)
+    }
+    // otherwise the default action is to hide the textMarker
+    else {
+      lastDisplay = textMarker.style.display
+      textMarker.style.display = 'none'
+    }
+    return this
+  }
+})()
+
+// the forward tick function
+Typewriter.prototype._untick = function(currentElement, textMarker) {
+  console.log('untick')
+  if(this.untick !== undefined && this.untick !== null) {
+    this.untick(currentElement, textMarker)
   }
   // otherwise the default action is to hide the textMarker
   else {
-    textMarker.elem.style.display = 'none'
+    textMarker.style.display = lastDisplay
   }
   return this
 }
