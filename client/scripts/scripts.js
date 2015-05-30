@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
   t.type('i\'m typing like a noob')
     .pause(0)
     .cr()
-    .changeLPS(60)
+    .changeLPS(20)
     .beginTag('span')
     .type('this text should be way bigger just so you know')
     .changeLPS(3)
