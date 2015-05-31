@@ -126,6 +126,8 @@ Typewriter.prototype.delete = function(count) {
   this.currentPromise = this.currentPromise.then(() => {
     // return a promise that only resolves once we've deleted `count` letters
     return new Promise((resolve) => {
+      // should stop ticking when you start deleting
+      this.stopTicking()
       // this.currentElement.textContent = this.currentElement.textContent.slice(0, -1)
 
       // filter out the last textnode, and from that text node
@@ -146,6 +148,13 @@ Typewriter.prototype.delete = function(count) {
       resolve()
     })
   }).catch(console.log.bind(console))
+
+  // when the new promise (of typing) finishes, we should start the ticking
+  this.currentPromise.then(() => {
+    console.log('finished ticking')
+    this.startTicking()
+  })
+
   return this
 }
 
