@@ -1,3 +1,5 @@
+var TEXT_CLASS = 'typewriterjs-text'
+
 // Typewriter
 window.Typewriter = function(options) {
   var text
@@ -101,6 +103,13 @@ Typewriter.prototype.type = function(text) {
       // TODO: allow the user to add identifiers for the text elements
       // create a span element as a wrapper for the text
       spanTag = document.createElement('span')
+
+      // add the class identifier so it can be picked up
+      if (spanTag.classList)
+        spanTag.classList.add(TEXT_CLASS)
+      else
+        spanTag.className += ' ' + TEXT_CLASS
+
       // create a text node for building the text
       textNode = document.createTextNode('')
       spanTag.appendChild(textNode)
@@ -161,10 +170,15 @@ Typewriter.prototype.delete = function(count) {
 
       // filter out the last textnode, and from that text node
       for(var i=this.currentElement.childNodes.length; --i>=0; ) {
-        // if its a text node, setup an interval removing letters from it, and then return
-        if(this.currentElement.childNodes[i].nodeType === 3) {
+        let node = this.currentElement.childNodes[i]
+        // if its a text node, setup an interval removing letters from it,
+        // and then return
+        if(node.classList ? node.classList.contains(TEXT_CLASS) :
+          new RegExp('(^| )' + TEXT_CLASS + '( |$)', 'gi').test(node.className)) {
           let interval = window.setInterval(() => {
-            this.currentElement.childNodes[i].nodeValue = this.currentElement.childNodes[i].nodeValue.slice(0, -1)
+            console.log('node', node, node.textContent)
+            node.textContent =
+              node.textContent.slice(0, -1)
             if(count-- === 0) {
               window.clearInterval(interval)
               resolve()
