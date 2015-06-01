@@ -13,6 +13,9 @@ window.Typewriter = function(options) {
   // add a typing marker to the container, and add a typewriter text block
   // text = document.createElement('div')
   this.textMarker = document.createElement('i')
+  // the aspect ratio of the textMarker, w/h
+  this.textMarkerAspectRatio = 1/2
+
   // text.classList.add('typewriter-text')
   this.textMarker.classList.add('typewriter-marker')
   // options.container.appendChild(text)
@@ -22,6 +25,7 @@ window.Typewriter = function(options) {
   this.currentElement = this.container
   // used for maintaining order of execution, immediately resolve the first op
   this.currentPromise = Promise.resolve()
+
 
   // this.tickAction used
   this.tick = options.tick
@@ -43,6 +47,7 @@ window.Typewriter = function(options) {
         display: inline-block;
       }
       .typewriter-marker {
+        vertical-align: bottom;
         background: red;
         display: inline-block;
         height: 40px;
@@ -87,10 +92,15 @@ Typewriter.prototype.type = function(text) {
     letterCount = 0;
     // return a promise that resolves once it's finished
     return new Promise((resolve) => {
+      // if there is no text, then immediately resolve
+      if(text.length === 0) {
+        resolve()
+      }
+
       // shouldn't tick when it's typing
       this.stopTicking()
-
-      // create a span element
+      // TODO: allow the user to add identifiers for the text elements
+      // create a span element as a wrapper for the text
       spanTag = document.createElement('span')
       // create a text node for building the text
       textNode = document.createTextNode('')
@@ -98,14 +108,24 @@ Typewriter.prototype.type = function(text) {
       // prepend it in front of the text marker
       this.currentElement.insertBefore(spanTag, this.textMarker)
 
+      // add the first letter of the text content, and then update the size of
+      // the text marker
+      textNode.textContent += text[0]
+      console.log('height', spanTag.offsetHeight)
+      this.textMarker.style.height = spanTag.offsetHeight
+      this.textMarker.style.width = spanTag.offsetHeight * this.textMarkerAspectRatio
+      letterCount++
+
       interval = window.setInterval(() => {
-        textNode.textContent += text[letterCount]
-        letterCount++
         // finished typing
         if(letterCount === text.length) {
           clearInterval(interval);
           resolve()
+          return
         }
+        // otherwise continue typing
+        textNode.textContent += text[letterCount]
+        letterCount++
       }, 1/this.lps * 1000)
     })
   }).catch(console.log.bind(console))
@@ -116,7 +136,6 @@ Typewriter.prototype.type = function(text) {
     console.log('finished ticking')
     // this.startTicking()
   })
-
   return this
 }
 
