@@ -65,7 +65,6 @@ window.Typewriter = function(options) {
 
   head.insertBefore(style, head.firstChild);
 
-
   this._init()
 
   return this
@@ -134,7 +133,7 @@ Typewriter.prototype.type = function(text) {
   // when the new promise (of typing) finishes, we should start the ticking
   this.currentPromise.then(() => {
     console.log('finished ticking')
-    // this.startTicking()
+    this.startTicking()
   })
   return this
 }
@@ -182,7 +181,7 @@ Typewriter.prototype.delete = function(count) {
   // when the new promise (of typing) finishes, we should start the ticking
   this.currentPromise.then(() => {
     console.log('finished ticking')
-    // this.startTicking()
+    this.startTicking()
   })
 
   return this
