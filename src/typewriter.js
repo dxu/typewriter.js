@@ -76,21 +76,27 @@ Typewriter.prototype.feed = function(container) {
   return this
 }
 
-// creates and puts a text node
+// Creates a <span> and uses that as the container for setting the text. This
+// will stop the ticking
 Typewriter.prototype.type = function(text) {
-  // shouldn't tick when it's typing
   this.currentPromise = this.currentPromise.then(() => {
     var letterCount
       , interval
-      , textNode;
+      , textNode
+      , spanTag;
     letterCount = 0;
     // return a promise that resolves once it's finished
     return new Promise((resolve) => {
+      // shouldn't tick when it's typing
       this.stopTicking()
+
+      // create a span element
+      spanTag = document.createElement('span')
       // create a text node for building the text
       textNode = document.createTextNode('')
+      spanTag.appendChild(textNode)
       // prepend it in front of the text marker
-      this.currentElement.insertBefore(textNode, this.textMarker)
+      this.currentElement.insertBefore(spanTag, this.textMarker)
 
       interval = window.setInterval(() => {
         textNode.textContent += text[letterCount]
