@@ -297,6 +297,17 @@ Typewriter.prototype.disableTick = function() {
   })
   return this
 }
+
+// startTicking
+Typewriter.prototype.enableTick = function() {
+  this.currentPromise = this.currentPromise.then(() => {
+    this.startTicking()
+    this.tickable = true
+    return Promise.resolve()
+  })
+  return this
+}
+
 // TODO: If I hide an already hidden element, when I show, will it show, or will it remain hidden?
 // the forward tick function
 Typewriter.prototype._tick = (function(){
