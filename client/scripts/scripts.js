@@ -16,10 +16,16 @@ document.addEventListener("DOMContentLoaded", function(event) {
     .delete(1)
     .pause(1000)
     .execute(function(){
-      alert('hi')
+      console.log('this is inside a synchronous function!')
     })
     .delete(2)
     .pause(1000)
+    .executeAsync(function(resolve){
+      setTimeout(function(){
+        console.log('this is inside an asynchronous setTimeout!')
+        resolve()
+      }, 3000)
+    })
     .delete(3)
     .pause(1000)
     .delete(4)

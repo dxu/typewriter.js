@@ -146,7 +146,6 @@ Typewriter.prototype.type = function(text) {
 }
 
 // takes in a synchronous function to execute at this time
-// the function takes in a complete callback to indicate when it finishes
 Typewriter.prototype.execute = function(func) {
   this.currentPromise = this.currentPromise.then(function() {
     func()
@@ -158,10 +157,14 @@ Typewriter.prototype.execute = function(func) {
 // takes in an asynchronous function to execute at this time. The function must
 // take in a resolve function to indicate when the function has resolved
 // the function takes in a complete callback to indicate when it finishes
-Typewriter.prototype.execute = function(func) {
+// it takes in optional context and arguments
+// TODO: Should I be taking in arguments/context? Should I be passing in resolve
+// as the last param?
+Typewriter.prototype.executeAsync = function(func) {
   this.currentPromise = this.currentPromise.then(function() {
-    func()
-    return Promise.resolve()
+    return new Promise(function(resolve){
+      func(resolve)
+    })
   })
   return this
 }
