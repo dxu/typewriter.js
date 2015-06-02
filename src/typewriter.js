@@ -179,7 +179,7 @@ Typewriter.prototype.delete = function(count) {
             console.log('node', node, node.textContent)
             node.textContent =
               node.textContent.slice(0, -1)
-            if(count-- === 0) {
+            if(--count === 0) {
               window.clearInterval(interval)
               resolve()
             }
