@@ -32,6 +32,8 @@ window.Typewriter = function(options) {
   // this.tickAction used
   this.tick = options.tick
   this.untick = options.untick
+  // whether or not this should be able to tick
+  this.tickable = options.tickable || true
   this.currentPromise = Promise.resolve()
   // save the original options, just in case
   this.options = options
@@ -255,6 +257,9 @@ Typewriter.prototype.changeLPS = function(lps) {
 // disable cursor tick
 Typewriter.prototype.stopTicking = function() {
   window.clearInterval(this.tickInterval)
+  if(!this.tickable) {
+    return this
+  }
   // make sure that the marker is unticked
   this._untick(this.currentElement, this.textMarker)
   return this
@@ -262,6 +267,10 @@ Typewriter.prototype.stopTicking = function() {
 
 // enable cursor tick
 Typewriter.prototype.startTicking = function() {
+  if(!this.tickable) {
+    return this
+  }
+
   var currentlyTicked = false
   this.tickInterval = window.setInterval(() => {
     // if it's currently ticked then tick, otherwise untick
@@ -275,6 +284,19 @@ Typewriter.prototype.startTicking = function() {
 
 var lastDisplay
 
+// permanently hide the tickmark cursor tick
+Typewriter.prototype.disableTick = function() {
+  this.currentPromise = this.currentPromise.then(() => {
+    window.clearInterval(this.tickInterval)
+    // make sure that the marker is unticked
+    // this._untick(this.currentElement, this.textMarker)
+    lastDisplay = this.textMarker.style.display
+    this.textMarker.style.display = 'none'
+    this.tickable = false
+    return Promise.resolve()
+  })
+  return this
+}
 // TODO: If I hide an already hidden element, when I show, will it show, or will it remain hidden?
 // the forward tick function
 Typewriter.prototype._tick = (function(){
