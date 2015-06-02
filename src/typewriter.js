@@ -147,8 +147,24 @@ Typewriter.prototype.type = function(text) {
   return this
 }
 
-// takes in a function to execute at this time
+// takes in a synchronous function to execute at this time
+// the function takes in a complete callback to indicate when it finishes
 Typewriter.prototype.execute = function(func) {
+  this.currentPromise = this.currentPromise.then(function() {
+    func()
+    return Promise.resolve()
+  })
+  return this
+}
+
+// takes in an asynchronous function to execute at this time. The function must
+// take in a resolve function to indicate when the function has resolved
+// the function takes in a complete callback to indicate when it finishes
+Typewriter.prototype.execute = function(func) {
+  this.currentPromise = this.currentPromise.then(function() {
+    func()
+    return Promise.resolve()
+  })
   return this
 }
 

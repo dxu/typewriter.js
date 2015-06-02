@@ -15,6 +15,9 @@ document.addEventListener("DOMContentLoaded", function(event) {
     .changeLPS(3)
     .delete(1)
     .pause(1000)
+    .execute(function(){
+      alert('hi')
+    })
     .delete(2)
     .pause(1000)
     .delete(3)
