@@ -14,7 +14,8 @@ document.addEventListener("DOMContentLoaded", function(event) {
     .type('this text should be way bigger just so you know')
     .changeLPS(3)
     .delete(1)
-    .pause(1000)
+    .disableTick()
+    .pause(10000)
     .execute(function(){
       console.log('this is inside a synchronous function!')
     })
@@ -31,5 +32,6 @@ document.addEventListener("DOMContentLoaded", function(event) {
     .delete(4)
     .pause(5000)
     .changeLPS(6)
+    .enableTick()
     .type(' here\'s some more big text')
 })
