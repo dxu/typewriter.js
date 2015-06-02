@@ -119,7 +119,6 @@ Typewriter.prototype.type = function(text) {
       // add the first letter of the text content, and then update the size of
       // the text marker
       textNode.textContent += text[0]
-      console.log('height', spanTag.offsetHeight)
       this.textMarker.style.height = spanTag.offsetHeight
       this.textMarker.style.width = spanTag.offsetHeight * this.textMarkerAspectRatio
       letterCount++
@@ -141,7 +140,6 @@ Typewriter.prototype.type = function(text) {
 
   // when the new promise (of typing) finishes, we should start the ticking
   this.currentPromise.then(() => {
-    console.log('finished ticking')
     this.startTicking()
   })
   return this
@@ -192,7 +190,6 @@ Typewriter.prototype.delete = function(count) {
         if(node.classList ? node.classList.contains(TEXT_CLASS) :
           new RegExp('(^| )' + TEXT_CLASS + '( |$)', 'gi').test(node.className)) {
           let interval = window.setInterval(() => {
-            console.log('node', node, node.textContent)
             node.textContent =
               node.textContent.slice(0, -1)
             if(--count === 0) {
@@ -210,7 +207,6 @@ Typewriter.prototype.delete = function(count) {
 
   // when the new promise (of typing) finishes, we should start the ticking
   this.currentPromise.then(() => {
-    console.log('finished ticking')
     this.startTicking()
   })
 
@@ -255,7 +251,6 @@ Typewriter.prototype.changeLPS = function(lps) {
 
 // disable cursor tick
 Typewriter.prototype.stopTicking = function() {
-  console.log('cleared interval', this.tickInterval)
   window.clearInterval(this.tickInterval)
   // make sure that the marker is unticked
   this._untick(this.currentElement, this.textMarker)
@@ -280,7 +275,6 @@ var lastDisplay
 // TODO: If I hide an already hidden element, when I show, will it show, or will it remain hidden?
 // the forward tick function
 Typewriter.prototype._tick = (function(){
-  console.log('tick')
   return function(currentElement, textMarker) {
     if(this.tick !== undefined && this.tick !== null) {
       this.tick(currentElement, textMarker)
@@ -296,7 +290,6 @@ Typewriter.prototype._tick = (function(){
 
 // the forward tick function
 Typewriter.prototype._untick = function(currentElement, textMarker) {
-  console.log('untick')
   if(this.untick !== undefined && this.untick !== null) {
     this.untick(currentElement, textMarker)
   }
