@@ -11,16 +11,26 @@ document.addEventListener("DOMContentLoaded", function(event) {
     .cr()
     .changeLPS(20)
     .beginTag('span')
-    .type('this text should be way bigger just so you know')
+    .css(
+      {'font-size': '100px'}
+    )
+    .ink('#BABABA')
+    .type('this text should be way bigger just so you know',
+      {
+        css: {
+          'font-size': '45px'
+        },
+        class: 'testName',
+        id: 'test1id'
+      }
+     )
     .changeLPS(3)
     .delete(1)
     .disableTick()
-    .pause(10000)
     .execute(function(){
       console.log('this is inside a synchronous function!')
     })
     .delete(2)
-    .pause(1000)
     .executeAsync(function(resolve){
       setTimeout(function(){
         console.log('this is inside an asynchronous setTimeout!')
@@ -30,8 +40,9 @@ document.addEventListener("DOMContentLoaded", function(event) {
     .delete(3)
     .pause(1000)
     .delete(4)
-    .pause(5000)
+    .pause(1000)
     .changeLPS(6)
     .enableTick()
+    .ink()
     .type(' here\'s some more big text')
 })
