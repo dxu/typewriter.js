@@ -226,6 +226,8 @@ Typewriter.prototype.delete = function(count) {
 Typewriter.prototype.beginTag = function(tag) {
   this.currentPromise = this.currentPromise.then(() => {
     var newTag = document.createElement(tag)
+    // always insert with this.textMarker as the "current position"
+    this.currentElement.insertBefore(newTag, this.textMarker)
     // append the text marker to this new tag
     newTag.appendChild(this.textMarker.parentNode.removeChild(this.textMarker))
 
@@ -239,7 +241,7 @@ Typewriter.prototype.beginTag = function(tag) {
 // insert a carriage return in the form of a br tag
 Typewriter.prototype.cr = function() {
   this.currentPromise = this.currentPromise.then(() => {
-    this.currentElement.appendChild(document.createElement("br"));
+    this.currentElement.insertBefore(document.createElement("br"), this.textMarker)
     return Promise.resolve()
   })
   return this
