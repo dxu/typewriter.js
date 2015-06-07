@@ -39,9 +39,11 @@ window.Typewriter = function(options) {
   this.options = options
 
   // the color the typewriter is using
+  this._ink = undefined
 
 
 
+  // tick interval internal
   this.tickInterval = undefined
 
   // create a style tag to apply styles. prepend it so it can be overridden
@@ -88,6 +90,9 @@ Typewriter.prototype.feed = function(container) {
 
 // Creates a <span> and uses that as the container for setting the text. This
 // will stop the ticking
+//
+// tak
+//
 Typewriter.prototype.type = function(text) {
   this.currentPromise = this.currentPromise.then(() => {
     var letterCount
@@ -124,7 +129,7 @@ Typewriter.prototype.type = function(text) {
       textNode = document.createTextNode('')
       spanTag.appendChild(textNode)
       // prepend it in front of the text marker
-      this.currentElement.insertBefore(spanTag, this.textMarker)
+      this.container.insertBefore(spanTag, this.textMarker)
 
       // add the first letter of the text content, and then update the size of
       // the text marker
@@ -196,8 +201,8 @@ Typewriter.prototype.delete = function(count) {
       // this.currentElement.textContent = this.currentElement.textContent.slice(0, -1)
 
       // filter out the last textnode, and from that text node
-      for(var i=this.currentElement.childNodes.length; --i>=0; ) {
-        let node = this.currentElement.childNodes[i]
+      for(var i=this.container.childNodes.length; --i>=0; ) {
+        let node = this.container.childNodes[i]
         // if its a text node, setup an interval removing letters from it,
         // and then return
         if(node.classList ? node.classList.contains(TEXT_CLASS) :
@@ -235,12 +240,13 @@ Typewriter.prototype.beginTag = function(tag) {
   this.currentPromise = this.currentPromise.then(() => {
     var newTag = document.createElement(tag)
     // always insert with this.textMarker as the "current position"
-    this.currentElement.insertBefore(newTag, this.textMarker)
+    this.container.insertBefore(newTag, this.textMarker)
     // append the text marker to this new tag
     newTag.appendChild(this.textMarker.parentNode.removeChild(this.textMarker))
 
-    this.currentElement.appendChild(newTag)
-    this.currentElement = newTag
+    // update the container and current element
+    this.container = newTag
+    this.currentElement = this.container
     return Promise.resolve()
   }).catch(console.log.bind(console))
   return this
@@ -249,7 +255,7 @@ Typewriter.prototype.beginTag = function(tag) {
 // insert a carriage return in the form of a br tag
 Typewriter.prototype.cr = function() {
   this.currentPromise = this.currentPromise.then(() => {
-    this.currentElement.insertBefore(document.createElement("br"), this.textMarker)
+    this.container.insertBefore(document.createElement("br"), this.textMarker)
     return Promise.resolve()
   })
   return this
@@ -271,7 +277,7 @@ Typewriter.prototype.stopTicking = function() {
     return this
   }
   // make sure that the marker is unticked
-  this._untick(this.currentElement, this.textMarker)
+  this._untick(this.container, this.textMarker)
   return this
 }
 
@@ -284,8 +290,8 @@ Typewriter.prototype.startTicking = function() {
   var currentlyTicked = false
   this.tickInterval = window.setInterval(() => {
     // if it's currently ticked then tick, otherwise untick
-    currentlyTicked ? this._untick(this.currentElement, this.textMarker) :
-      this._tick(this.currentElement, this.textMarker)
+    currentlyTicked ? this._untick(this.container, this.textMarker) :
+      this._tick(this.container, this.textMarker)
     currentlyTicked = !currentlyTicked
   }, 1000 / this.tickRate)
 
@@ -299,7 +305,7 @@ Typewriter.prototype.disableTick = function() {
   this.currentPromise = this.currentPromise.then(() => {
     window.clearInterval(this.tickInterval)
     // make sure that the marker is unticked
-    // this._untick(this.currentElement, this.textMarker)
+    // this._untick(this.container, this.textMarker)
     lastDisplay = this.textMarker.style.display
     this.textMarker.style.display = 'none'
     this.tickable = false
@@ -321,9 +327,9 @@ Typewriter.prototype.enableTick = function() {
 // TODO: If I hide an already hidden element, when I show, will it show, or will it remain hidden?
 // the forward tick function
 Typewriter.prototype._tick = (function(){
-  return function(currentElement, textMarker) {
+  return function(container, textMarker) {
     if(this.tick !== undefined && this.tick !== null) {
-      this.tick(currentElement, textMarker)
+      this.tick(container, textMarker)
     }
     // otherwise the default action is to hide the textMarker
     else {
@@ -335,9 +341,9 @@ Typewriter.prototype._tick = (function(){
 })()
 
 // the forward tick function
-Typewriter.prototype._untick = function(currentElement, textMarker) {
+Typewriter.prototype._untick = function(container, textMarker) {
   if(this.untick !== undefined && this.untick !== null) {
-    this.untick(currentElement, textMarker)
+    this.untick(container, textMarker)
   }
   // otherwise the default action is to hide the textMarker
   else {
