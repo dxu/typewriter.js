@@ -360,6 +360,18 @@ Typewriter.prototype.pause = function(duration) {
 Typewriter.prototype.endFeed = function() {
   return this
 }
+
+// set a style on the current element
+Typewriter.prototype.css = function(css) {
+  this.currentPromise = this.currentPromise.then(() => {
+    for(let attr in css) {
+      this.currentElement.style[attr] = css[attr]
+    }
+    return Promise.resolve()
+  })
+  return this
+}
+
 // set color in typewriter. If no color is set, then it clears the ink
 Typewriter.prototype.ink = function(color='') {
   this.currentPromise = this.currentPromise.then(() => {
