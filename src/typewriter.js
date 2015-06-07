@@ -38,8 +38,10 @@ window.Typewriter = function(options) {
   // save the original options, just in case
   this.options = options
 
+  // the color the typewriter is using
 
-  // tick interval internal
+
+
   this.tickInterval = undefined
 
   // create a style tag to apply styles. prepend it so it can be overridden
@@ -105,6 +107,12 @@ Typewriter.prototype.type = function(text) {
       // TODO: allow the user to add identifiers for the text elements
       // create a span element as a wrapper for the text
       spanTag = document.createElement('span')
+      // update the currentElement to be this spantag
+      this.currentElement = spanTag
+      // if there is an ink color, set it on this span
+      if(this._ink !== undefined && this._ink !== '' && this._ink !== null) {
+        spanTag.style.color = this._ink
+      }
 
       // add the class identifier so it can be picked up
       if (spanTag.classList)
@@ -352,3 +360,12 @@ Typewriter.prototype.pause = function(duration) {
 Typewriter.prototype.endFeed = function() {
   return this
 }
+// set color in typewriter. If no color is set, then it clears the ink
+Typewriter.prototype.ink = function(color='') {
+  this.currentPromise = this.currentPromise.then(() => {
+    this._ink = color
+    return Promise.resolve()
+  })
+  return this
+}
+
