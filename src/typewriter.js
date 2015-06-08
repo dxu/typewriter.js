@@ -78,6 +78,11 @@ window.Typewriter = function(options) {
   return this
 }
 
+Typewriter.prototype._updateTextMarkerSize = function(tag) {
+  this.textMarker.style.height = tag.offsetHeight
+  this.textMarker.style.width = tag.offsetHeight * this.textMarkerAspectRatio
+}
+
 Typewriter.prototype._init = function() {
   this.startTicking()
 }
@@ -148,8 +153,7 @@ Typewriter.prototype.type = function(text, options={}) {
       // add the first letter of the text content, and then update the size of
       // the text marker
       textNode.textContent += text[0]
-      this.textMarker.style.height = spanTag.offsetHeight
-      this.textMarker.style.width = spanTag.offsetHeight * this.textMarkerAspectRatio
+      this._updateTextMarkerSize(spanTag)
       letterCount++
 
       interval = window.setInterval(() => {
@@ -401,3 +405,14 @@ Typewriter.prototype.ink = function(color='') {
   return this
 }
 
+// move the text marker and current element to the new container element
+Typewriter.prototype.move = function(tag) {
+  this.currentPromise = this.currentPromise.then(() => {
+    this.container = tag
+    this.currentElement = tag
+    this.container.appendChild(this.textMarker.parentNode.removeChild(this.textMarker))
+    this._updateTextMarkerSize(tag)
+    return Promise.resolve()
+  })
+  return this
+}
