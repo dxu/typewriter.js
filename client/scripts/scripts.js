@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", function(event) {
   var t = new Typewriter({
-    lps: 20,
+    lps: 60,
     container: document.getElementById('test')
   });
 
@@ -9,7 +9,6 @@ document.addEventListener("DOMContentLoaded", function(event) {
   t.type('i\'m typing like a noob')
     .pause(0)
     .cr()
-    .changeLPS(20)
     .beginTag('span')
     .css(
       {'font-size': '100px'}
@@ -27,13 +26,9 @@ document.addEventListener("DOMContentLoaded", function(event) {
       setTimeout(function(){
         console.log('this is inside an asynchronous setTimeout!')
         resolve()
-      }, 3000)
+      }, 1000)
     })
-    .delete(3)
-    .pause(1000)
-    .delete(4)
-    .pause(1000)
-    .changeLPS(60)
+    .changeLPS(1)
     .enableTick()
     .ink()
     .type(' here\'s some more big text but not as big',
@@ -44,4 +39,5 @@ document.addEventListener("DOMContentLoaded", function(event) {
         class: 'testName testName2',
         id: 'test1id'
       })
+    .move(document.getElementById('test2'))
 })
