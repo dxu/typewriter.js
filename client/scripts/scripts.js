@@ -15,16 +15,8 @@ document.addEventListener("DOMContentLoaded", function(event) {
       {'font-size': '100px'}
     )
     .ink('#BABABA')
-    .type('this text should be way bigger just so you know',
-      {
-        css: {
-          'font-size': '45px'
-        },
-        class: 'testName',
-        id: 'test1id'
-      }
-     )
-    .changeLPS(3)
+    .type('this text should be way bigger just so you know')
+    .changeLPS(10)
     .delete(1)
     .disableTick()
     .execute(function(){
@@ -41,8 +33,15 @@ document.addEventListener("DOMContentLoaded", function(event) {
     .pause(1000)
     .delete(4)
     .pause(1000)
-    .changeLPS(6)
+    .changeLPS(60)
     .enableTick()
     .ink()
-    .type(' here\'s some more big text')
+    .type(' here\'s some more big text but not as big',
+      {
+        css: {
+          'font-size': '45px'
+        },
+        class: 'testName testName2',
+        id: 'test1id'
+      })
 })

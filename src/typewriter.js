@@ -93,7 +93,7 @@ Typewriter.prototype.feed = function(container) {
 //
 // tak
 //
-Typewriter.prototype.type = function(text) {
+Typewriter.prototype.type = function(text, options={}) {
   this.currentPromise = this.currentPromise.then(() => {
     var letterCount
       , interval
@@ -128,6 +128,20 @@ Typewriter.prototype.type = function(text) {
       // create a text node for building the text
       textNode = document.createTextNode('')
       spanTag.appendChild(textNode)
+
+      // address the options
+      if(options.css !== undefined && options.css !== null) {
+        for(let attr in options.css) {
+          this.currentElement.style[attr] = options.css[attr]
+        }
+      }
+      if(options.class !== undefined && options.class !== null) {
+        this.currentElement.classList.add(...options.class.split(' '))
+      }
+      if(options.id !== undefined && options.id !== null) {
+        this.currentElement.id = options.id
+      }
+
       // prepend it in front of the text marker
       this.container.insertBefore(spanTag, this.textMarker)
 
