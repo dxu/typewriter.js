@@ -82,6 +82,7 @@ window.Typewriter = function(options) {
 }
 
 Typewriter.prototype._updateTextMarkerSize = function(tag) {
+  console.log('new textmarker', tag.offsetHeight)
   this.textMarker.style.height = tag.offsetHeight
   this.textMarker.style.width = tag.offsetHeight * this.textMarkerAspectRatio
 }
@@ -418,8 +419,9 @@ Typewriter.prototype.move = function(tag) {
   this.currentPromise = this.currentPromise.then(() => {
     this.container = tag
     this.currentElement = tag
-    this.container.appendChild(this.textMarker.parentNode.removeChild(this.textMarker))
     this._updateTextMarkerSize(tag)
+    // append only after we've updated the textmarker size so that the textmarker doesn't alter heights of elements
+    this.container.appendChild(this.textMarker.parentNode.removeChild(this.textMarker))
     return Promise.resolve()
   })
   return this
