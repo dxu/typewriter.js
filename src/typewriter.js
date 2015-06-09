@@ -7,6 +7,9 @@ window.Typewriter = function(options) {
   if(options.container === undefined || options.container === null) {
     throw new Error("No typewriter container defined")
   }
+  // id used to identify the typewriter block. we should set the class each time
+  // we .move(), and also each time we initialize.
+  this._id = options.id || ''
   this.lps = options.lps || 5
   // times per second it ticks
   this.tickRate = options.tickRate || 2
@@ -55,7 +58,7 @@ window.Typewriter = function(options) {
         display: inline-block;
       }
       .typewriter-marker {
-        vertical-align: bottom;
+        vertical-align: text-top;
         background: red;
         display: inline-block;
         height: 40px;
@@ -149,6 +152,8 @@ Typewriter.prototype.type = function(text, options={}) {
 
       // prepend it in front of the text marker
       this.container.insertBefore(spanTag, this.textMarker)
+      spanTag.appendChild(this.textMarker.parentNode.removeChild(this.textMarker))
+
 
       // add the first letter of the text content, and then update the size of
       // the text marker
@@ -159,6 +164,9 @@ Typewriter.prototype.type = function(text, options={}) {
       interval = window.setInterval(() => {
         // finished typing
         if(letterCount === text.length) {
+          // when it's finished we have to move the textmarker back outside the spanTag
+          this.textMarker = this.textMarker.parentNode.removeChild(this.textMarker)
+          spanTag.parentNode.insertBefore(this.textMarker, spanTag.nextSibling)
           clearInterval(interval);
           resolve()
           return
