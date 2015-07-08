@@ -1,4 +1,4 @@
-var TEXT_CLASS = 'typewriterjs-text'
+const TEXT_CLASS = 'typewriterjs-text';
 
 // Typewriter
 window.Typewriter = function(options) {
@@ -116,6 +116,8 @@ Typewriter.prototype.type = function(text, options={}) {
         resolve()
       }
 
+      // update the textmarker to be right after the currentElement because it could be within a span tag
+
       // shouldn't tick when it's typing
       this.stopTicking()
       // TODO: allow the user to add identifiers for the text elements
@@ -165,8 +167,11 @@ Typewriter.prototype.type = function(text, options={}) {
       interval = window.setInterval(() => {
         // finished typing
         if(letterCount === text.length) {
-          // when it's finished we have to move the textmarker back outside the spanTag
           this.textMarker = this.textMarker.parentNode.removeChild(this.textMarker)
+          // when it's finished we DO NOT move the textmarker back outside the spanTag
+          // because the outer text might be bigger than the current span tag. We leave the
+          // updating of the textmarker to the next call
+          // when it's finished we have to move the textmarker back outside the spanTag
           spanTag.parentNode.insertBefore(this.textMarker, spanTag.nextSibling)
           clearInterval(interval);
           resolve()

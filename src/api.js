@@ -92,7 +92,8 @@
 
   // defines the container with the text
   root.Typewriter.prototype.feed = function feed(container) {
-    this.container = this.currentElement = container;
+    this.container = container;
+    this.currentElement = this.container;
     return this;
   };
 
@@ -116,14 +117,26 @@
         }
 
         // update the textmarker to be right after the currentElement because it could be within a span tag
+            //
+            // this.textMarker = this.textMarker.parentNode.removeChild(this.textMarker);
+            // spanTag.parentNode.insertBefore(this.textMarker, spanTag.nextSibling);
+
+        // update the current position of the text marker
+        // If there is no "current element", append it to the container
+        // if (this.currentElement !== undefined && this.currentElement !== null) {
+        //   this.container.appendChild(this.textMarker);
+        // } else {
+        //   // otherwise insert it after the current element
+        //   this.container.insertBefore(this.textMarker.parentNode.removeChild(this.textMarker), this.currentElement.nextSibling);
+        // }
+
 
         // shouldn't tick when it's typing
         this.stopTicking();
+
         // TODO: allow the user to add identifiers for the text elements
         // create a span element as a wrapper for the text
         spanTag = document.createElement('span');
-        // update the currentElement to be this spantag
-        this.currentElement = spanTag;
         // if there is an ink color, set it on this span
         if (this._ink !== undefined && this._ink !== '' && this._ink !== null) {
           spanTag.style.color = this._ink;
@@ -144,15 +157,15 @@
         if (options.css !== undefined && options.css !== null) {
           for (const attr in options.css) {
             if (options.css.hasOwnProperty(attr)) {
-              this.currentElement.style[attr] = options.css[attr];
+              spanTag.style[attr] = options.css[attr];
             }
           }
         }
         if (options.class !== undefined && options.class !== null) {
-          this.currentElement.classList.add(...options.class.split(' '));
+          spanTag.classList.add(...options.class.split(' '));
         }
         if (options.id !== undefined && options.id !== null) {
-          this.currentElement.id = options.id;
+          spanTag.id = options.id;
         }
 
         // prepend it in front of the text marker
@@ -169,13 +182,18 @@
         interval = window.setInterval(() => {
           // finished typing
           if (letterCount === text.length) {
-            this.textMarker = this.textMarker.parentNode.removeChild(this.textMarker);
+            // this.textMarker = this.textMarker.parentNode.removeChild(this.textMarker);
             // when it's finished we DO NOT move the textmarker back outside the spanTag
             // because the outer text might be bigger than the current span tag. We leave the
             // updating of the textmarker to the next call
             // when it's finished we have to move the textmarker back outside the spanTag
-            spanTag.parentNode.insertBefore(this.textMarker, spanTag.nextSibling);
+            // spanTag.parentNode.insertBefore(this.textMarker, spanTag.nextSibling);
+            //
             clearInterval(interval);
+
+            // update the currentElement to be this spantag
+            this.currentElement = spanTag;
+
             resolve();
             return;
           }
@@ -232,6 +250,16 @@
       return new Promise((resolve) => {
         // should stop ticking when you start deleting
         this.stopTicking();
+
+        // if its a span with the TEXT_CLASS, then we remove text from the span
+        if(this.currentElement.nodeType === 'span' &&
+           this.currentElement.classList.hasClass(TEXT_CLASS)) {
+        } else if(this.currentElement.nodeType === 'br') {
+          // if it's just a br just remove it. Ignore the count.
+          // TODO: figure out how to incorporate this count?
+
+        }
+
         // this.currentElement.textContent = this.currentElement.textContent.slice(0, -1)
 
         // filter out the last textnode, and from that text node
@@ -289,7 +317,15 @@
   // insert a carriage return in the form of a br tag
   root.Typewriter.prototype.cr = function cr() {
     this.currentPromise = this.currentPromise.then(() => {
-      this.container.insertBefore(document.createElement('br'), this.textMarker);
+      console.log(this.container);
+      const newBr = document.createElement('br');
+      // update the location of the textmarker. Because it will be located
+      // inside the spanTag (currentElement), we must extract it and put it
+      // after the currentElement
+      this.container.insertBefore(this.textMarker.parentNode.removeChild(this.textMarker), this.currentElement.nextSibling);
+      this.container.insertBefore(newBr, this.textMarker);
+      // update the current element to the newly created <br>
+      this.currentElement = newBr;
       return Promise.resolve();
     });
     return this;
