@@ -47,7 +47,7 @@
     // create a style tag to apply styles. prepend it so it can be overridden
     const head = document.head || document.getElementsByTagName('head')[0];
     const style = document.createElement('style');
-    const css =
+    const defaultCSS =
     `
       .typewriter-text {
         display: inline-block;
@@ -64,9 +64,9 @@
     style.type = 'text/css';
 
     if (style.styleSheet) {
-      style.styleSheet.cssText = css;
+      style.styleSheet.cssText = defaultCSS;
     } else {
-      style.appendChild(document.createTextNode(css));
+      style.appendChild(document.createTextNode(defaultCSS));
     }
 
     head.insertBefore(style, head.firstChild);
@@ -232,205 +232,205 @@
         // this.currentElement.textContent = this.currentElement.textContent.slice(0, -1)
 
         // filter out the last textnode, and from that text node
-        for(var i=this.container.childNodes.length; --i>=0; ) {
-          let node = this.container.childNodes[i]
+        for (let i = this.container.childNodes.length; --i >= -1; ) {
+          const node = this.container.childNodes[i];
           // if its a text node, setup an interval removing letters from it,
           // and then return
-          if(node.classList ? node.classList.contains(TEXT_CLASS) :
+          if (node.classList ? node.classList.contains(TEXT_CLASS) :
             new RegExp('(^| )' + TEXT_CLASS + '( |$)', 'gi').test(node.className)) {
-            let interval = window.setInterval(() => {
+            const interval = window.setInterval(() => {
               node.textContent =
-                node.textContent.slice(0, -1)
-              if(--count === 0) {
-                window.clearInterval(interval)
-                resolve()
+                node.textContent.slice(0, -1);
+              if (--count === -1) {
+                window.clearInterval(interval);
+                resolve();
               }
-            }, 1/this.lps * 1000)
-            return
+            }, 1 / this.lps * 1000);
+            return;
           }
         }
         // if there are no text nodes, then resolve and return
-        resolve()
-      })
-    }).catch(console.log.bind(console))
+        resolve();
+      });
+    }).catch(console.log.bind(console));
 
     // when the new promise (of typing) finishes, we should start the ticking
     this.currentPromise.then(() => {
-      this.startTicking()
-    })
+      this.startTicking();
+    });
 
-    return this
-  }
+    return this;
+  };
 
   // this should return
   // <p> this is text <a>this is a link</a></p>
   // .tag('p').text('this is text ').tag('a').text('this is a link')
 
   // create a tag, and set that as the current operating element
-  root.Typewriter.prototype.beginTag = function(tag) {
+  root.Typewriter.prototype.beginTag = function beginTag(tag) {
     this.currentPromise = this.currentPromise.then(() => {
-      var newTag = document.createElement(tag)
+      const newTag = document.createElement(tag);
       // always insert with this.textMarker as the "current position"
-      this.container.insertBefore(newTag, this.textMarker)
+      this.container.insertBefore(newTag, this.textMarker);
       // append the text marker to this new tag
-      newTag.appendChild(this.textMarker.parentNode.removeChild(this.textMarker))
+      newTag.appendChild(this.textMarker.parentNode.removeChild(this.textMarker));
 
       // update the container and current element
-      this.container = newTag
-      this.currentElement = this.container
-      return Promise.resolve()
-    }).catch(console.log.bind(console))
-    return this
-  }
+      this.container = newTag;
+      this.currentElement = this.container;
+      return Promise.resolve();
+    }).catch(console.log.bind(console));
+    return this;
+  };
 
   // insert a carriage return in the form of a br tag
-  root.Typewriter.prototype.cr = function() {
+  root.Typewriter.prototype.cr = function cr() {
     this.currentPromise = this.currentPromise.then(() => {
-      this.container.insertBefore(document.createElement("br"), this.textMarker)
-      return Promise.resolve()
-    })
-    return this
-  }
+      this.container.insertBefore(document.createElement('br'), this.textMarker);
+      return Promise.resolve();
+    });
+    return this;
+  };
 
   // change typing speed
-  root.Typewriter.prototype.changeLPS = function(lps) {
+  root.Typewriter.prototype.changeLPS = function changeLPS(lps) {
     this.currentPromise = this.currentPromise.then(() => {
-      this.lps = lps
-      return Promise.resolve()
-    })
-    return this
-  }
+      this.lps = lps;
+      return Promise.resolve();
+    });
+    return this;
+  };
 
   // disable cursor tick
-  root.Typewriter.prototype.stopTicking = function() {
-    window.clearInterval(this.tickInterval)
-    if(!this.tickable) {
-      return this
+  root.Typewriter.prototype.stopTicking = function stopTicking() {
+    window.clearInterval(this.tickInterval);
+    if (!this.tickable) {
+      return this;
     }
     // make sure that the marker is unticked
-    this._untick(this.container, this.textMarker)
-    return this
-  }
+    this._untick(this.container, this.textMarker);
+    return this;
+  };
 
   // enable cursor tick
-  root.Typewriter.prototype.startTicking = function() {
-    if(!this.tickable) {
-      return this
+  root.Typewriter.prototype.startTicking = function startTicking() {
+    if (!this.tickable) {
+      return this;
     }
 
-    var currentlyTicked = false
+    let currentlyTicked = false;
     this.tickInterval = window.setInterval(() => {
       // if it's currently ticked then tick, otherwise untick
-      currentlyTicked ? this._untick(this.container, this.textMarker) :
-        this._tick(this.container, this.textMarker)
-      currentlyTicked = !currentlyTicked
-    }, 1000 / this.tickRate)
+      if (currentlyTicked) {
+        this._untick(this.container, this.textMarker);
+      } else {
+        this._tick(this.container, this.textMarker);
+      }
+      currentlyTicked = !currentlyTicked;
+    }, 1000 / this.tickRate);
 
-    return this
-  }
+    return this;
+  };
 
-  var lastDisplay
+  let lastDisplay;
 
   // permanently hide the tickmark cursor tick
-  root.Typewriter.prototype.disableTick = function() {
+  root.Typewriter.prototype.disableTick = function disableTick() {
     this.currentPromise = this.currentPromise.then(() => {
-      window.clearInterval(this.tickInterval)
+      window.clearInterval(this.tickInterval);
       // make sure that the marker is unticked
       // this._untick(this.container, this.textMarker)
-      lastDisplay = this.textMarker.style.display
-      this.textMarker.style.display = 'none'
-      this.tickable = false
-      return Promise.resolve()
-    })
-    return this
-  }
+      lastDisplay = this.textMarker.style.display;
+      this.textMarker.style.display = 'none';
+      this.tickable = false;
+      return Promise.resolve();
+    });
+    return this;
+  };
 
   // startTicking
-  root.Typewriter.prototype.enableTick = function() {
+  root.Typewriter.prototype.enableTick = function enableTick() {
     this.currentPromise = this.currentPromise.then(() => {
-      this.startTicking()
-      this.tickable = true
-      return Promise.resolve()
-    })
-    return this
-  }
+      this.startTicking();
+      this.tickable = true;
+      return Promise.resolve();
+    });
+    return this;
+  };
 
   // TODO: If I hide an already hidden element, when I show, will it show, or will it remain hidden?
   // the forward tick function
-  root.Typewriter.prototype._tick = (function(){
-    return function(container, textMarker) {
-      if(this.tick !== undefined && this.tick !== null) {
-        this.tick(container, textMarker)
-      }
+  root.Typewriter.prototype._tick = (() => {
+    return function _tick(container, textMarker) {
+      if (this.tick !== undefined && this.tick !== null) {
+        this.tick(container, textMarker);
+      } else {
       // otherwise the default action is to hide the textMarker
-      else {
-        lastDisplay = textMarker.style.display
-        textMarker.style.display = 'none'
+        lastDisplay = textMarker.style.display;
+        textMarker.style.display = 'none';
       }
-      return this
-    }
-  })()
+      return this;
+    };
+  })();
 
   // the forward tick function
-  root.Typewriter.prototype._untick = function(container, textMarker) {
-    if(this.untick !== undefined && this.untick !== null) {
-      this.untick(container, textMarker)
-    }
+  root.Typewriter.prototype._untick = function _untick(container, textMarker) {
+    if (this.untick !== undefined && this.untick !== null) {
+      this.untick(container, textMarker);
+    } else {
     // otherwise the default action is to hide the textMarker
-    else {
-      textMarker.style.display = lastDisplay
+      textMarker.style.display = lastDisplay;
     }
-    return this
-  }
+    return this;
+  };
 
   // pause the typewriter, in milliseconds
-  root.Typewriter.prototype.pause = function(duration) {
-    this.currentPromise = this.currentPromise.then(function() {
-      return new Promise(function(resolve) {
-        setTimeout(resolve, duration)
-      })
-    })
-    return this
-  }
+  root.Typewriter.prototype.pause = function pause(duration) {
+    this.currentPromise = this.currentPromise.then(() => {
+      return new Promise((resolve) => {
+        setTimeout(resolve, duration);
+      });
+    });
+    return this;
+  };
 
   // finish this container
-  root.Typewriter.prototype.endFeed = function() {
-    return this
-  }
+  root.Typewriter.prototype.endFeed = function endFeed() {
+    return this;
+  };
 
   // set a style on the current element
-  root.Typewriter.prototype.css = function(css) {
+  root.Typewriter.prototype.css = function css(cssAttrs) {
     this.currentPromise = this.currentPromise.then(() => {
-      for(let attr in css) {
-        this.currentElement.style[attr] = css[attr]
+      for (const attr in cssAttrs) {
+        if (cssAttrs.hasOwnProperty(attr)) {
+          this.currentElement.style[attr] = css[attr];
+        }
       }
-      return Promise.resolve()
-    })
-    return this
-  }
+      return Promise.resolve();
+    });
+    return this;
+  };
 
   // set color in typewriter. If no color is set, then it clears the ink
-  root.Typewriter.prototype.ink = function(color='') {
+  root.Typewriter.prototype.ink = function ink(color = '') {
     this.currentPromise = this.currentPromise.then(() => {
-      this._ink = color
-      return Promise.resolve()
-    })
-    return this
-  }
+      this._ink = color;
+      return Promise.resolve();
+    });
+    return this;
+  };
 
   // move the text marker and current element to the new container element
-  root.Typewriter.prototype.move = function(tag) {
+  root.Typewriter.prototype.move = function move(tag) {
     this.currentPromise = this.currentPromise.then(() => {
-      this.container = tag
-      this.currentElement = tag
-      this._updateTextMarkerSize(tag)
+      this.container = tag;
+      this.currentElement = tag;
+      this._updateTextMarkerSize(tag);
       // append only after we've updated the textmarker size so that the textmarker doesn't alter heights of elements
-      this.container.appendChild(this.textMarker.parentNode.removeChild(this.textMarker))
-      return Promise.resolve()
-    })
-    return this
-  }
-
-
-
+      this.container.appendChild(this.textMarker.parentNode.removeChild(this.textMarker));
+      return Promise.resolve();
+    });
+    return this;
+  };
 }());
