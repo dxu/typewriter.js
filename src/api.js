@@ -76,6 +76,9 @@
     return this;
   };
 
+
+
+
   root.Typewriter.prototype._updateTextMarkerSize =
     function _updateTextMarkerSize(tag) {
         // console.log('new textmarker', tag.offsetHeight);
@@ -404,7 +407,7 @@
     this.currentPromise = this.currentPromise.then(() => {
       for (const attr in cssAttrs) {
         if (cssAttrs.hasOwnProperty(attr)) {
-          this.currentElement.style[attr] = css[attr];
+          this.currentElement.style[attr] = cssAttrs[attr];
         }
       }
       return Promise.resolve();
